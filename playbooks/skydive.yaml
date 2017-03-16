@@ -1,0 +1,53 @@
+- name: Install prereqs for skydive on controller
+  hosts: controllers
+  sudo: True
+  tasks:
+    - name: Install Opendk
+      yum:
+        name: java-openjdk
+        state: present
+    - name: Install Elasticsearch
+      yum:
+        name: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.rpm
+        state: present
+    - name: Enable Easticsearch
+      service:
+        name: elasticsearch
+        enabled: yes
+        state: started
+
+- name: Install skydive common repositories to all
+  hosts: controllers,computes
+  sudo: True
+  tasks:
+    - name: yum repos required for skydive
+      yum:
+        name: centos-release-virt-common,centos-release-qemu-ev,centos-release-openstack-newton,centos-release-opstools
+        state: present
+    - name: install commin skydive packages
+      yum:
+        name: skydive,skydive-agent
+        state: present
+    - name: Enable skydive-agent service
+      service:
+        name: skydive-agent
+        enabled: yes
+        state: started
+
+- name: Install Skydive Analyzer
+  hosts: controllers
+  sudo: True
+  tasks:
+    - name: Install skydive-analyzer
+      yum:
+        name: skydive-analyzer
+        state: present
+    - name: Enable skydive-analyzer service
+      service:
+        name: skydive-analyzer
+        enabled: yes
+        state: started
+
+
+
+
