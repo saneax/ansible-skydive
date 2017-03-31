@@ -1,6 +1,7 @@
 - name: Install prereqs for skydive on controller
   hosts: controllers
-  sudo: True
+  become: yes
+  become_method: sudo
   tasks:
     - name: Install Opendk
       yum:
@@ -18,16 +19,31 @@
 
 - name: Install skydive common repositories to all
   hosts: controllers,computes
-  sudo: True
+  become: yes
+  become_method: sudo
   tasks:
     - name: yum repos required for skydive
       yum:
         name: centos-release-virt-common,centos-release-qemu-ev,centos-release-openstack-newton,centos-release-opstools
         state: present
-    - name: install commin skydive packages
+    - name: install common skydive packages
       yum:
         name: skydive,skydive-agent
         state: present
+
+- name: install skydive.yaml configuration file
+  hosts: controllers,computes
+  become: yes
+  become_method: sudo
+  vars:
+    auth_url: http://10.0.0.13:5000/v2.0
+    admin_username: admin
+    admin_password: hYgKP6tpxk7e4Ta6qGwedEVgP
+    controller_ip: overcloud-controller-0.internalapi
+    compute_ip: overcloud-novacompute-0.internalapi
+  tasks:
+    - name: copy skydive.yaml.j2
+      copy: src=templates/skydive.yaml.j2 dest=/etc/skydive/skydive.yaml owner=root mode=600
     - name: Enable skydive-agent service
       service:
         name: skydive-agent
@@ -36,7 +52,8 @@
 
 - name: Install Skydive Analyzer
   hosts: controllers
-  sudo: True
+  become: yes
+  become_method: sudo
   tasks:
     - name: Install skydive-analyzer
       yum:
