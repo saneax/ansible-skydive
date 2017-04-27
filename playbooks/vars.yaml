@@ -1,0 +1,27 @@
+- name: populate variables for openstack rc
+  hosts: localhost
+  tasks:
+    - name: grab username from overcloudrc
+      shell: >
+        cat {{ ansible_env.HOME }}/overcloudrc | grep export | awk '{print $2}' | grep -i username | cut -d = -f 2
+      register: username
+    - name: grab password from overcloudrc
+      shell: >
+        cat {{ ansible_env.HOME }}/overcloudrc | grep export | awk '{print $2}' | grep -i password | cut -d = -f 2
+      register: password
+    - name: grab auth_url from overcloudrc
+      shell: >
+        cat {{ ansible_env.HOME }}/overcloudrc | grep export | awk '{print $2}' | grep -i auth_url | cut -d = -f 2
+      register: auth_url
+    - name: debug vars
+      debug: msg="user={{ username.stdout }}, password={{ password.stdout }}, auth_url={{ auth_url.stdout }}" 
+
+
+- name: Push a test file on remote compute with IP address
+  hosts: controllers
+  tasks:
+    - name: publish data to a file
+      file:
+
+
+

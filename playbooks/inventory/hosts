@@ -1,5 +1,18 @@
-[controllers]
-192.168.24.12
+[flavor-oooq_control]
 
-[computes]
-192.168.24.13
+
+[flavor-oooq_compute]
+
+
+[controllers:children]
+flavor-oooq_control
+
+
+
+[computes:children]
+flavor-oooq_compute
+
+
+[computes:vars]
+os_username="{{ shell('cat /home/stack/stackrc | grep OS_USERNAME') }}"
+os_password="{{ shell('cat /home/stack/overcloudrc | grep OS_PASSWORD') }}"
